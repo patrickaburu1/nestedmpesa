@@ -171,12 +171,12 @@
                         <strong >Success</strong>Request accepted for processing
                     </div>
 
-                    <div  th:if="${status=='info'}" class="alert alert-success">
+                    <div  th:if="${status=='info'}" class="alert alert-info">
                         <button type="button" class="close" data-dismiss="alert">×</button>
                         <strong  ></strong>Request not processed
                     </div>
 
-                    <div  th:if="${status=='error'}" class="alert alert-success">
+                    <div  th:if="${status=='error'}" class="alert alert-error">
                         <button type="button" class="close" data-dismiss="alert">×</button>
                         <strong >Failed,</strong> Request failed
                     </div>
