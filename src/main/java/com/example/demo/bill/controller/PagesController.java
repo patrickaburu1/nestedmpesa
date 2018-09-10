@@ -15,12 +15,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.logging.Logger;
 
+
 @Controller
 public class PagesController {
 
     private final BillService billService;
 
-    private StkPush stkPush=new StkPush();
+    //String total = tennis.getTotal() != null ? tennis.getTotal() : null;
     private Logger logger=Logger.getLogger(PagesController.class.getSimpleName());
 
 
@@ -46,7 +47,7 @@ public class PagesController {
     public String topup(Model model){
 
         model.addAttribute("topup", new Topup());
-      // model.addAttribute("message","null");
+        // model.addAttribute("message","null");
 
         return "topup";
     }
@@ -54,33 +55,26 @@ public class PagesController {
     @PostMapping("/topup")
     public String topUp(@ModelAttribute Topup topup, BindingResult bindingResult, RedirectAttributes ra) {
 
-            /*EXECUTE STK PUSH QUERY*/
-        try {
 
-            billService.topUp1(topup);
+        StkPush stkPush = new StkPush();
 
+        /*EXECUTE STK PUSH QUERY*/
 
-            logger.info("to up status  "+stkPush);
-
-            if (bindingResult.hasErrors()) {
-                ra.addFlashAttribute("status", "error");
-                ra.addFlashAttribute("message", "form error make sure you fill inn the fields");
-                return "redirect:/topup";
-            } else {
-
-                ra.addFlashAttribute("message", stkPush.getCustomerMessage());
-                ra.addFlashAttribute("status", stkPush.getStatus());
-
-                return "redirect:/topup";
-            }
-        }catch (Exception ex){
-            logger.info("exception in controller "+ex.getMessage());
+        String response= billService.topUp1(topup);
 
 
-            logger.info("to up status message   "+stkPush.getCustomerMessage());
+        logger.info("to up status  "+response);
 
-            ra.addFlashAttribute("message", stkPush.getCustomerMessage());
-            ra.addFlashAttribute("status", stkPush.getStatus());
+        if (bindingResult.hasErrors()) {
+            ra.addFlashAttribute("status", "info");
+            // ra.addFlashAttribute("message", "form error make sure you fill inn the fields");
+            return "redirect:/topup";
+        } else {
+
+
+            // ra.addFlashAttribute("message", stkPush.getCustomerMessage());
+            //ra.addFlashAttribute("status", stkPush.getStatus());
+            ra.addFlashAttribute("status", response);
 
             return "redirect:/topup";
         }

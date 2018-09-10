@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 @Service
 public class BillServiceImpl implements BillService {
     private final
@@ -31,7 +30,8 @@ public class BillServiceImpl implements BillService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private final Gson gson;
     private ApiToken apiToken;
-    private StkPush stkPush;
+    private StkPush stkPush=new StkPush();
+
 
     @Autowired
     public BillServiceImpl(Gson gson, TopupRespository topupRespository, MpesaConfig mpesaConfig) {
@@ -57,86 +57,97 @@ public class BillServiceImpl implements BillService {
     @Override
     public String topUp1(Topup topup) {
 
-        getMpesaToken();
+        //getMpesaToken();
 
-        String token = apiToken.getAccess_token();
+        logger.info("\n" + "arrived " + " \n");
+        //  String token = apiToken.getAccess_token();
+        String token ="test";
 
         /*first log that skt push*/
         topupRespository.save(topup);
 
-        if (token != null) {
-            /*do an mpesa stk push*/
-            OkHttpClient client = new OkHttpClient();
+        /*if (token != null) {*/
+        /*do an mpesa stk push*/
+        OkHttpClient client = new OkHttpClient();
 
-            String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
-            String shortcode = mpesaConfig.getShortcode();
-            String passkey = mpesaConfig.getPass_key();
-            String pass = shortcode + "" + passkey + "" + timeStamp;
-            String msisdn = topup.getMsisdn();
-            Double amount = topup.getAmount();
-            /*Encode password with base 64 */
-            String password = Base64.getEncoder().encodeToString(pass.getBytes());
+        String shortcode = mpesaConfig.getShortcode();
+        String passkey = mpesaConfig.getPass_key();
+        String pass = shortcode + "" + passkey + "" + timeStamp;
+        String msisdn = topup.getMsisdn();
+        Double amount = topup.getAmount();
+        /*Encode password with base 64 */
+        String password = Base64.getEncoder().encodeToString(pass.getBytes());
 
-            RequestParams params = new RequestParams();
-            params.setShortcode(shortcode);
-            params.setPassword(password);
-            params.setTimestamp(timeStamp);
-            params.setAmount(amount);
-            params.setCallBackUrl("https://google.com/");
-            params.setTransactionDesc("test");
-            params.setTransactionType("CustomerPayBillOnline");
-            params.setPartyA(msisdn);
-            params.setPartyB(shortcode);
-            params.setPhoneNumber(msisdn);
-            params.setAccountReference("test");
+        RequestParams params = new RequestParams();
+        params.setShortcode(shortcode);
+        params.setPassword(password);
+        params.setTimestamp(timeStamp);
+        params.setAmount(amount);
+        params.setCallBackUrl("https://google.com/");
+        params.setTransactionDesc("test");
+        params.setTransactionType("CustomerPayBillOnline");
+        params.setPartyA(msisdn);
+        params.setPartyB(shortcode);
+        params.setPhoneNumber(msisdn);
+        params.setAccountReference("test");
 
-            HashMap<String, Object> re = new HashMap<>();
-            re.put("state", "error");
+        HashMap<String, Object> re = new HashMap<>();
+        re.put("state", "error");
 
-            logger.info("\n" + "msisdn " + topup.getMsisdn() + " \n");
-            logger.info("\n" + "stk push data " + params + " \n");
-            logger.info("\n" + "mpesa token  " + apiToken.getAccess_token() + " \n");
+        logger.info("\n" + "msisdn " + topup.getMsisdn() + " \n");
+        logger.info("\n" + "stk push data " + params + " \n");
+        // logger.info("\n" + "mpesa token  " + apiToken.getAccess_token() + " \n");
 
-            MediaType mediaType = MediaType.parse("application/json");
+        /*    MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, gson.toJson(params));
             Request request = new Request.Builder()
                     .url(mpesaConfig.getStkUrl())
                     .post(body)
                     .addHeader("authorization", "Bearer " + apiToken.getAccess_token())
                     .addHeader("content-type", "application/json")
-                    .build();
-            try {
-                Response response = client.newCall(request).execute();
-                logger.info("\n" + "status code  " + response.code() + " \n");
-                if (response.code() == 200) {
-                    logger.info("\n" + "response 200  " + response.body().string() + " \n");
+                    .build();*/
 
-                    stkPush.setStatus("success");
-                    stkPush.setCustomerMessage("Request accepted for processing");
-                    logger.info("stk pushed successfully customer  ", stkPush.getCustomerMessage());
-                    return "success";
-                } else {
 
-                    logger.info("\n" + "response not success  code "+response.code()+" body " + response.body().string() + " \n");
+        Request request = new Request.Builder()
+                .url("http://localhost:8080/topup/history")
+                .addHeader("content-type", "application/json")
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            logger.info("\n" + "status code  " + response.code() + " \n");
+            if (response.code() == 200) {
+                logger.info("\n" + "response 200  " + response.body().string() + " \n");
 
-                    stkPush.setStatus("error");
-                    stkPush.setCustomerMessage("failed please try again");
+                stkPush.setStatus("success");
+                stkPush.setCustomerMessage("Request accepted for processing");
 
-                    return "success";
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.info("\n" + "exception  " + e.getMessage() + " \n");
+                logger.info("stk pushed successfully customer  ", stkPush.getCustomerMessage());
+                return "success";
+            } else {
+
+                logger.info("\n" + "response not success  code "+response.code()+" body " + response.body().string() + " \n");
+
+                stkPush.setStatus("error");
+                stkPush.setCustomerMessage("failed please try again");
+
+                return "error";
             }
-
-            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.info("\n" + "exception  " + e.getMessage() + " \n");
         }
-        /*failed to generate mpesa token token*/
+
+        return  null;
+
+
+        /*    }
+         *//*failed to generate mpesa token token*//*
         else {
             logger.info("\n" + "Failed to generatetoken " + " \n");
             return null;
-        }
+        }*/
 
     }
 

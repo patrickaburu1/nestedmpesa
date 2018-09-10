@@ -31,7 +31,7 @@ public class TopUpController {
     }
 
     @RequestMapping(value = "/wallet", method = RequestMethod.POST)
- /*   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")*/
+    /*   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")*/
     public @ResponseBody Object topup(@Valid Topup topup){
 
         try {
@@ -52,13 +52,13 @@ public class TopUpController {
 
     /* GET TRANSACTION HISTORY  */
     @GetMapping(value = "/history")
-  /*  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")*/
+    /*  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")*/
     public  @ResponseBody Object history(){
 
         try {
             Iterable<Topup> response=billService.finAllTopups();
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
@@ -71,7 +71,7 @@ public class TopUpController {
         logger.info("\n"+"filter "+amount+"\n");
 
         try {
-          return   topupRespository.findByAmount(amount);
+            return   topupRespository.findByAmount(amount);
 
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
