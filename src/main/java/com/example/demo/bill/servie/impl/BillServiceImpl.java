@@ -64,7 +64,7 @@ public class BillServiceImpl implements BillService {
         String token ="test";
 
         /*first log that skt push*/
-        topupRespository.save(topup);
+       // topupRespository.save(topup);
 
         /*if (token != null) {*/
         /*do an mpesa stk push*/
