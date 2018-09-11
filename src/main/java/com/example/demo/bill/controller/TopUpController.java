@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,7 +32,7 @@ public class TopUpController {
     }
 
     @RequestMapping(value = "/wallet", method = RequestMethod.POST)
-    /*   @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")*/
+       @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")
     public @ResponseBody Object topup(@Valid Topup topup){
 
         try {
@@ -52,13 +53,13 @@ public class TopUpController {
 
     /* GET TRANSACTION HISTORY  */
     @GetMapping(value = "/history")
-    /*  @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")*/
+      @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER') or hasAuthority('CUSTOMER_USER')")
     public  @ResponseBody Object history(){
 
         try {
             Iterable<Topup> response=billService.finAllTopups();
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }

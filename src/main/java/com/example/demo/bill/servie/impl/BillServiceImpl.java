@@ -111,7 +111,7 @@ public class BillServiceImpl implements BillService {
 
 
         Request request = new Request.Builder()
-                .url("https://new-m-pesa.herokuapp.com/topup/history")
+                .url("http://localhost:8080/topup/history")
                 .addHeader("content-type", "application/json")
                 .build();
         try {
