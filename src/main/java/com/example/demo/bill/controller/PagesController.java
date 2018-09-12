@@ -11,8 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
 
 
@@ -33,14 +35,21 @@ public class PagesController {
 
 
     @GetMapping(value = "/home")
-    public String home(Model model){
-        model.addAttribute("appName", "MPESA DASHBOARD");
+    public Object home(HttpServletRequest request){
+
+
+      /*  model.addAttribute("appName", "MPESA DASHBOARD");
         model.addAttribute("message", "MESSAGE");
         model.addAttribute("data", "MESSAGE");
 
-        model.addAttribute("tasks", billService.finAllTopups());
+        model.addAttribute("transactions", billService.finAllTopups());
+        return "transactions";*/
 
-        return "transactions";
+        ModelAndView mv=new ModelAndView();
+        mv.addObject("transactions",billService.finAllTopups());
+        mv.setViewName("transactions");
+
+        return mv;
     }
 
     @GetMapping(value = "/topup")
