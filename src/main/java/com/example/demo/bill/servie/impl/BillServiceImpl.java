@@ -8,6 +8,7 @@ import com.example.demo.bill.util.ApiToken;
 import com.example.demo.bill.util.StkPush;
 import com.google.gson.Gson;
 
+import jdk.internal.org.objectweb.asm.commons.Method;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +64,6 @@ public class BillServiceImpl implements BillService {
         //  String token = apiToken.getAccess_token();
         String token ="test";
 
-        /*first log that skt push*/
-       // topupRespository.save(topup);
-
-        /*if (token != null) {*/
-        /*do an mpesa stk push*/
         OkHttpClient client = new OkHttpClient();
 
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -111,7 +107,7 @@ public class BillServiceImpl implements BillService {
 
 
         Request request = new Request.Builder()
-                .url("http://localhost:8080/topup/history")
+                .url(mpesaConfig.getStkUrl())
                 .addHeader("content-type", "application/json")
                 .build();
         try {
