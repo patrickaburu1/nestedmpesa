@@ -74,19 +74,11 @@ public class PagesController {
 
         logger.info("to up status  "+response);
 
-        if (bindingResult.hasErrors()) {
-            ra.addFlashAttribute("status", "info");
-            // ra.addFlashAttribute("message", "form error make sure you fill inn the fields");
-            return "redirect:/topup";
-        } else {
+        ra.addFlashAttribute("status", response);
 
+        return "redirect:/topup";
 
-            // ra.addFlashAttribute("message", stkPush.getCustomerMessage());
-            //ra.addFlashAttribute("status", stkPush.getStatus());
-            ra.addFlashAttribute("status", response);
-
-            return "redirect:/topup";
-        }
+        
 
     }
 
