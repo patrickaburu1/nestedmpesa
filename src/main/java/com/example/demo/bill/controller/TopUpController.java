@@ -39,7 +39,7 @@ public class TopUpController {
 
             logger.info("\n"+"data received "+topup+"\n");
 
-            billService.getMpesaToken();
+           // billService.getMpesaToken();
             return  ResponseEntity.status(HttpStatus.OK).body(billService.topUp1(topup));
 
         }catch (Exception ex){
